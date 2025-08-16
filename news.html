@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bengal Bulletin</title>
+    <style>
+        :root {
+            --primary-color: #A52A2A;
+            --secondary-color: #8B4513;
+            --background-color: #FDF5E6;
+            --text-color: #333;
+            --link-color: #007BFF;
+            --font-family-serif: 'Playfair Display', serif;
+            --font-family-sans: 'Roboto', sans-serif;
+        }
+
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Roboto:wght@300;400;700&display=swap');
+
+        body {
+            font-family: var(--font-family-sans);
+            line-height: 1.6;
+            margin: 0;
+            background-color: var(--background-color);
+            color: var(--text-color);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 30px 0;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 4em;
+            font-family: var(--font-family-serif);
+            letter-spacing: 2px;
+        }
+
+        header p {
+            margin: 5px 0 0;
+            font-style: italic;
+            font-family: var(--font-family-serif);
+        }
+
+        nav {
+            background-color: var(--secondary-color);
+            color: white;
+            text-align: center;
+            padding: 15px 0;
+            margin-top: 20px;
+            border-radius: 8px;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            padding: 0 25px;
+            font-weight: bold;
+            font-size: 1.2em;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: #ffcc99;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+        
+        .news-card {
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+        }
+        
+        .news-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+        
+        .news-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            display: block;
+        }
+        
+        .card-content {
+            padding: 20px;
+        }
+        
+        .card-content h3 {
+            color: var(--primary-color);
+            font-family: var(--font-family-serif);
+            font-size: 1.5em;
+            margin: 0 0 10px;
+        }
+        
+        .card-content .byline {
+            font-style: italic;
+            color: #777;
+            font-size: 0.8em;
+            margin-bottom: 10px;
+        }
+        
+        .card-content p {
+            font-size: 0.9em;
+            color: #555;
+            margin: 0;
+        }
+
+        .full-article {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            overflow-y: auto;
+            padding: 20px;
+            box-sizing: border-box;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+        }
+        
+        .full-article.active {
+            display: block;
+            opacity: 1;
+        }
+        
+        .full-article-content {
+            background-color: #fff;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 30px;
+            border-radius: 15px;
+            position: relative;
+        }
+        
+        .full-article-content img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 50%;
+            font-size: 1.2em;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .close-btn:hover {
+            background-color: var(--secondary-color);
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px 0;
+            background-color: var(--secondary-color);
+            color: white;
+            margin-top: 30px;
+            border-radius: 8px;
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2.5em;
+            }
+            nav a {
+                padding: 0 10px;
+                font-size: 1em;
+            }
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>BENGAL BULLETIN</h1>
+        <p>Your daily source for news and views from Bengal and beyond</p>
+    </header>
+
+    <nav>
+        <a href="#home" data-category="home">HOME</a>
+        <a href="#legal" data-category="legal">LEGAL</a>
+        <a href="#sports" data-category="sports">SPORTS</a>
+        <a href="#educational" data-category="educational">EDUCATIONAL</a>
+        <a href="#entertainment" data-category="entertainment">ENTERTAINMENT</a>
+    </nav>
+
+    <div class="main-content" id="news-container">
+        </div>
+
+    <div id="full-article-modal" class="full-article">
+        <div class="full-article-content">
+            <button class="close-btn">&times;</button>
+            <div id="article-content">
+                </div>
+        </div>
+    </div>
+
+    <footer>
+        &copy; 2025 Bengal Bulletin. All Rights Reserved.
+    </footer>
+</div>
+
+<script>
+    const articles = [
+        {
+            id: 'heat-illness',
+            category: 'home',
+            title: 'Heat and Humidity Cause Mass Illness at Kolkata’s Red Road Parade',
+            byline: 'By Minakshi Karmakar. Published, August 15, 2025, 03:25 pm IST, Kolkata.',
+            image: './images/heat.png',
+            snippet: 'What was meant to be a proud Independence Day march turned into a medical emergency when 39 school students collapsed during the state parade on Red Road...',
+            fullText: `
+                <h2>Heat and Humidity Cause Mass Illness at Kolkata’s Red Road Parade</h2>
+                <p class="byline">By Minakshi Karmakar. Published, August 15, 2025, 03:25 pm IST, Kolkata.</p>
+                <img src="./images/heat.png" alt="Independence parade at Red Road">
+                <p>What was meant to be a proud Independence Day march turned into a medical emergency when 39 school students collapsed during the state parade on Red Road, prompting urgent calls for stronger health safeguards during large public events.</p>
+                <p>The Incident occurred mid-morning as thousands gathered to witness the annual celebrations. Light rainfall earlier in the day gave way to heavy humidity and warm conditions, creating a challenging environment for parade participants who had been standing in formation for extended periods.</p>
+                <p>Witnesses reported that the first signs of distress appeared when a few students complained of dizziness and nausea. Within minutes, others began to faint, triggering a chain reaction as worried peers also left their positions. Event medical staff rushed in with water and first-aid supplies, but many of the affected students had to be transported to SSKM Hospital for treatment.</p>
+                <h3>Rapid Medical Response</h3>
+                <p>Doctors at SSKM diagnosed most cases as heat exhaustion combined with dehydration. A few students showed signs of low blood pressure and required intravenous fluids. “Prolonged standing in humid conditions can quickly cause fluid loss and overheating, especially in children,” explained a senior physician on duty.</p>
+                <p>Chief Minister Mamata Banerjee, who was attending the parade, visited the hospital immediately after the event. She assured parents that all the children were out of danger. By evening, the majority had been discharged, with only one student kept under observation for further monitoring.</p>
+                <h3>Health Experts Urge Precautionary Measures</h3>
+                <p>Public health experts say the incident highlights the growing risks of heat-related illnesses, particularly as extreme weather events become more frequent. “Humidity is just as dangerous as direct sunlight because it prevents sweat from evaporating, which is the body’s natural cooling mechanism,” said Dr. Ananya Basu, a Kolkata-based pediatrician.</p>
+                <p>Recommendations include ensuring shaded waiting areas for participants, scheduling parades during cooler hours, and making regular hydration breaks mandatory. Schools have also been advised to prepare students physically for such events, including light conditioning exercises and guidance on heat safety.</p>
+                <h3>Lessons for the Future</h3>
+                <p>While the Red Road parade remains one of Kolkata’s most celebrated traditions, this year’s health scare has prompted a review of safety protocols. Organisers are expected to consult with medical professionals before finalizing next year’s arrangements.</p>
+                <p>For now, families of the affected students are relieved their children are safe — but the incident serves as a timely reminder that public health planning must be as central to national celebrations as the festivities themselves.</p>
+            `
+        },
+        {
+            id: 'stray-dogs',
+            category: 'legal',
+            title: 'Supreme Court Orders Mass Relocation of Stray Dogs in Delhi',
+            byline: 'By Minakshi Karmakar. Published August 11, 2025, 07:30 pm IST, New Delhi.',
+            image: './images/dogs.png',
+            snippet: 'The Supreme Court of India has issued a significant directive ordering the removal of all stray dogs from residential areas of Delhi and its adjoining regions...',
+            fullText: `
+                <h2>Supreme Court Orders Mass Relocation of Stray Dogs in Delhi, Sparks Legal and Ethical Debate</h2>
+                <p class="byline">By Minakshi Karmakar. Published August 11, 2025, 07:30 pm IST, New Delhi.</p>
+                <img src="./images/dogs.png" alt="Stray dogs at a locality in New Delhi.">
+                <p>The Supreme Court of India has issued a significant directive ordering the removal of all stray dogs from residential areas of Delhi and its adjoining regions, marking a decisive shift in how the capital will handle a long-standing public safety issue. The verdict, delivered earlier this week, has ignited a nationwide debate over the balance between human safety and animal rights.</p>
+                <h3>The Verdict and Its Scope</h3>
+                <p>A bench comprising Justices J. B. Pardiwala and R. Mahadevan directed municipal bodies to capture and transfer stray dogs to newly established shelters within six to eight weeks. The shelters must be equipped for mass sterilisation, rabies vaccination, and long-term housing, with the capacity to hold at least 5,000 animals initially.</p>
+                <p>The Court further mandated the creation of a 24-hour helpline for reporting dog-bite incidents, requiring civic authorities to respond within four hours of any complaint. Strict penalties were also announced for individuals or organisations obstructing the relocation process.</p>
+                <h3>Rationale Behind the Decision</h3>
+                <p>The ruling comes amid rising reports of dog bites and rabies-related deaths, especially among children in urban neighbourhoods. Citing these figures, the Court stated that “infants and young children must not, at any cost, fall prey to rabies,” and urged that sentiment must not overshadow safety.</p>
+                <p>The judges noted that existing sterilisation programs under the Animal Birth Control (ABC) Rules had failed to significantly curb aggressive behaviour or disease transmission, leading to the conclusion that a more direct intervention was necessary.</p>
+                <h3>Criticism and Pushback</h3>
+                <p>Animal rights groups and several legal experts have sharply criticised the decision, calling it a step backward from decades of humane stray dog management policy. The ABC Rules — which mandated capture, sterilisation, vaccination, and return of dogs to their original territories — were upheld by previous court rulings and widely considered an ethical standard.</p>
+                <p>Opponents argue that mass removal could cause overcrowding in shelters, increase animal suffering, and disrupt local ecological balances. Some lawyers have already indicated plans to file review petitions, seeking clarity on whether the verdict violates constitutional protections for animals.</p>
+                <h3>Civic Responsibility Under Scrutiny</h3>
+                <p>Following the order, a separate three-judge bench of the Court — comprising Justices Vikram Nath, Sandeep Mehta, and N. V. Anjaria — expressed concern that the current crisis was the result of years of municipal inaction. They observed that while rules and guidelines existed, they were poorly enforced, leaving both residents and stray animals vulnerable.</p>
+                <h3>What Lies Ahead</h3>
+                <p>Implementation of the Supreme Court’s order will require rapid coordination between the Delhi government, municipal corporations, and animal welfare organisations. The matter remains under judicial watch, with further hearings expected to assess compliance and address legal challenges.</p>
+                <p>As the city braces for this unprecedented relocation effort, the verdict has drawn a clear legal line: in conflicts between public safety and stray animal rights, the scales — at least for now — tip in favour of human protection.</p>
+            `
+        },
+        {
+            id: 'commonwealth-games',
+            category: 'sports',
+            title: 'India Pushes for 2030 Commonwealth Games Host Spot, Ahmedabad in the Lead',
+            byline: 'By Minakshi Karmakar. Published on August 13, 2025, 2.30 pm IST, Kolkata',
+            image: './images/games.png',
+            snippet: 'India’s ambition to host the 2030 Commonwealth Games has gained significant momentum this month, with Ahmedabad emerging as the focal point of the bid...',
+            fullText: `
+                <h2>India Pushes for 2030 Commonwealth Games Host Spot, Ahmedabad in the Lead</h2>
+                <p class="byline">By Minakshi Karmakar. Published on August 13, 2025, 2.30 pm IST, Kolkata</p>
+                <img src="./images/games.png" alt="Logo of Commonwealth Games.">
+                <p>India’s ambition to host the 2030 Commonwealth Games has gained significant momentum this month, with Ahmedabad emerging as the focal point of the bid. Backed by strong government support, modern sports infrastructure, and an increasingly confident sporting ecosystem, the country now stands as a leading contender for the prestigious multi-sport event.</p>
+                <p>A high-level delegation from the Commonwealth Sports Federation visited India earlier this week to inspect the proposed venues and assess the readiness of facilities. The tour included stops at the Sardar Vallabhbhai Patel Sports Enclave and other major sites in Ahmedabad, which have been designed to meet global standards for both athletes and spectators.</p>
+                <p>Speaking to reporters after the visit, Indian Olympic Association (IOA) President Rajesh Bhandari expressed optimism: “Our preparations are in line with the expectations of the Commonwealth Sports body. Ahmedabad offers not just world-class facilities, but also a city ready to host a cultural celebration alongside the Games.”</p>
+                <h3>A Strong Bid with Key Themes</h3>
+                <p>The IOA’s bid focuses on three key themes — sustainability, gender equality, and cultural integration. Plans include the use of renewable energy for venues, equitable promotion of men’s and women’s events, and showcasing India’s regional art forms during opening and closing ceremonies.</p>
+                <p>Residents in Ahmedabad have reacted with excitement and pride. Anjali Desai, a local schoolteacher, said: “This is more than just a sports event for us. It will put our city on the global map and inspire our children to take up sports.” Hotels, transport hubs, and businesses are already anticipating a surge in international visitors if India’s bid is successful.</p>
+                <h3>Competition and Future Prospects</h3>
+                <p>India’s competition is stiff, with Canada and Nigeria also in the race. Canada brings a strong hosting record and Nigeria is positioning itself as a representative for Africa’s growing sporting aspirations. The final host city will be decided at the Commonwealth Sports General Assembly in Glasgow this November, following the August 31 bid submission deadline.</p>
+                <p>Sports analysts believe India’s case is strengthened by its successful hosting of past major events, including the 2010 Commonwealth Games in Delhi and the 2023 Cricket World Cup. However, they caution that operational efficiency, transport connectivity, and accommodation readiness will be key deciding factors.</p>
+                <p>Government officials have assured that funding and logistical arrangements are being finalised. A senior Ministry of Youth Affairs and Sports representative noted: “We are approaching this as a national priority. The Commonwealth Games will leave a long-term legacy for sports infrastructure and tourism in India.”</p>
+                <p>As the countdown to the decision continues, Ahmedabad’s streets are already seeing promotional banners and community sports events in support of the bid. For many, the dream of hosting the Commonwealth Games represents not just sporting prestige, but also a chance to showcase the energy, diversity, and modern capability of a new India on the world stage.</p>
+            `
+        },
+        {
+            id: 'teacher-death',
+            category: 'educational',
+            title: 'Bengal Teacher’s Death Casts Shadow Over SSC Recruitment Crisis',
+            byline: 'By Minakshi Karmakar. Published on August 15, 2025, 6.30 Pm IST, Kolkata.',
+            image: './images/teacher.png',
+            snippet: 'Job loss stress blamed as 35-year-old teacher’s death intensifies protests over SSC recruitment cancellations...',
+            fullText: `
+                <h2>Bengal Teacher’s Death Casts Shadow Over SSC Recruitment Crisis</h2>
+                <p class="byline">By Minakshi Karmakar. Published on August 15, 2025, 6.30 Pm IST, Kolkata.</p>
+                <img src="./images/teacher.png" alt="Late Subal Soren who passed away after a cerebral attack.">
+                <p>Even as India celebrated its 78th Independence Day, grief descended on Paschim Medinipur when 35-year-old teacher Subal Soren passed away after suffering a cerebral attack. Soren, whose appointment had been cancelled following the Supreme Court’s order scrapping the 2016 School Service Commission (SSC) recruitment panel, had been actively protesting for reinstatement along with thousands of other jobless educators.</p>
+                <p>Doctors said he was admitted first to Debra Super Speciality Hospital before being shifted to a Kolkata facility, where he succumbed after four days of treatment.</p>
+                <h3>Stress and Uncertainty Blamed</h3>
+                <p>Soren’s family and colleagues maintain that his medical collapse was triggered by stress. “He was the only breadwinner. After losing his job, he was shattered both mentally and physically,” his wife told reporters.</p>
+                <p>Protesters also echoed the same despair. One teacher remarked: “Our death warrants were signed on April 3, the day the verdict was announced. Subal’s passing is the face of our suffering.”</p>
+                <h3>Wider Fallout of SSC Verdict</h3>
+                <p>In April this year, the Supreme Court annulled 25,753 school appointments made through the 2016 SSC process, citing irregularities. While the court permitted “untainted” candidates to work temporarily, it ordered fresh recruitment by December 31, 2025.</p>
+                <p>The ruling plunged thousands of teachers and non-teaching staff into uncertainty. Many have since resorted to hunger strikes, rallies, and sit-ins, demanding that those with genuine credentials be spared the punishment.</p>
+                <h3>Protests Intensify After Death</h3>
+                <p>News of Soren’s demise triggered spontaneous protests outside the hospital. Demonstrators raised slogans against the state administration and the SSC, accusing them of ignoring the mental health crisis among the affected teachers.</p>
+                <p>Opposition leaders seized on the development, blaming the government for failing to provide relief to genuine candidates. The ruling party, however, has maintained that it is bound to implement the apex court’s decision.</p>
+                <h3>A Symbol of Struggle</h3>
+                <p>Education experts warn that the continuing deadlock risks damaging trust in the recruitment system and deepening the crisis in government schools already grappling with vacancies.</p>
+                <p>For fellow teachers, however, Soren’s death is more than statistics and politics—it is a grim reminder of the cost borne by ordinary families.</p>
+                <p>As colleagues carried his body home draped in black flags, Independence Day celebrations felt muted. For thousands like him, freedom remains distant—freedom from joblessness, despair, and systemic failure.</p>
+            `
+        },
+        {
+            id: 'putulnacher-itikotha',
+            category: 'entertainment',
+            title: '“Putulnacher Itikotha” Weaves a Poignant Tale of Faith, Science, and Human Struggle',
+            byline: 'By Minakshi Karmakar. Published July 31, 2025 10.30 pm IST, Kolkata',
+            image: './images/putulnach.png',
+            snippet: 'Bengali cinema will be welcoming a powerful new literary adaptation this week with the release of Putulnacher Itikotha, a film that breathes fresh life into Manik Bandyopadhyay’s 1936 classic...',
+            fullText: `
+                <h2>“Putulnacher Itikotha” Weaves a Poignant Tale of Faith, Science, and Human Struggle</h2>
+                <p class="byline">By Minakshi Karmakar. Published July 31, 2025 10.30 pm IST, Kolkata</p>
+                <img src="./images/putulnach.png" alt="Poster of “Putulnacher Itikotha. “">
+                <p>Bengali cinema will be welcoming a powerful new literary adaptation this week with the release of Putulnacher Itikotha, a film that breathes fresh life into Manik Bandyopadhyay’s 1936 classic. Directed by acclaimed filmmaker Suman Mukhopadhyay, the movie unfolds as a deep exploration of the human condition, set against the backdrop of rural Bengal’s battle between tradition and progress.</p>
+                <img src="./images/putulnach2.png" alt="Actor Jaya Ahsan and Surangana Bandyopadhyay with the director Suman Mukhopadhyay.">
+                <p>The story follows Dr. Shashi (Abir Chatterjee), a young and idealistic physician who returns to his ancestral village determined to introduce modern medical practices. His vision quickly collides with a community deeply rooted in superstition, where centuries-old beliefs overshadow science and health interventions. As Shashi’s frustration mounts, his personal life becomes entangled with that of Kusum (Jaya Ahsan) and Kumud (Parambrata Chattopadhyay), whose arrival stirs emotional undercurrents that threaten to derail his mission.</p>
+                <h3>A Cinematic Masterpiece</h3>
+                <p>Mukhopadhyay’s adaptation remains faithful to the essence of Bandyopadhyay’s original work, retaining its philosophical weight while offering a cinematic language that is visually immersive. Cinematographer Sayak Bhattacharya crafts each frame like a painting, using soft light and earthy tones to reflect the quiet despair and moral dilemmas of the characters. The rural setting — from dusty pathways to rain-drenched courtyards — is depicted with a realism that becomes an unspoken character in the film.</p>
+                <p>The performances anchor the narrative. Abir Chatterjee delivers a nuanced portrayal of Shashi’s quiet battle between idealism and resignation. Jaya Ahsan brings depth to Kusum, balancing vulnerability and defiance, while Parambrata Chattopadhyay’s Kumud injects charm and ambiguity. Supporting roles by Ananya Chatterjee and Dhritiman Chatterjee add further emotional texture.</p>
+                <h3>Critical Acclaim and Relevance</h3>
+                <p>Speaking at the film’s Kolkata premiere, Mukhopadhyay described the project as a “16-year journey from dream to reality.” He said, “Manik Bandyopadhyay’s story remains as relevant today as when it was written — it forces us to question how much of our lives are governed by reason, and how much by inherited belief.”</p>
+                <p>Early audience reactions have been largely positive. Viewers praised the film’s atmospheric storytelling and strong performances, though some felt the pacing was deliberately slow. Film critic Anirban Mitra noted, “This is a film that asks you to think, not just watch. It doesn’t spoon-feed emotions — it lets you sit with them.”</p>
+                <p>The cultural significance of Putulnacher Itikotha goes beyond its narrative. In a time when Bengali cinema is increasingly turning to its literary roots for inspiration, the film serves as a bridge between generations — inviting younger audiences to engage with a nearly century-old novel while offering older viewers a visual reimagining of a cherished text.</p>
+                <p>By confronting the timeless tension between progress and tradition, Mukhopadhyay’s work invites reflection on issues that remain deeply relevant in modern India: the role of science in everyday life, the persistence of superstition, and the quiet struggles of those who try to spark change.</p>
+                <p>With its evocative visuals, committed performances, and enduring themes, Putulnacher Itikotha is more than just a film — it is a thought-provoking conversation between the past and the present.</p>
+            `
+        }
+    ];
+
+    const newsContainer = document.getElementById('news-container');
+    const navLinks = document.querySelectorAll('nav a');
+    const fullArticleModal = document.getElementById('full-article-modal');
+    const fullArticleContent = document.getElementById('article-content');
+    const closeBtn = document.querySelector('.close-btn');
+
+    function createNewsCard(article) {
+        const card = document.createElement('div');
+        card.classList.add('news-card');
+        card.dataset.id = article.id;
+        card.dataset.category = article.category;
+        
+        card.innerHTML = `
+            <img src="${article.image}" alt="${article.title}">
+            <div class="card-content">
+                <h3>${article.title}</h3>
+                <p class="byline">${article.byline}</p>
+                <p>${article.snippet}</p>
+            </div>
+        `;
+        
+        card.addEventListener('click', () => showFullArticle(article.id));
+        return card;
+    }
+
+    function showFullArticle(id) {
+        const article = articles.find(a => a.id === id);
+        if (article) {
+            fullArticleContent.innerHTML = article.fullText;
+            fullArticleModal.classList.add('active');
+            document.body.style.overflow = 'hidden'; // Prevent scrolling
+        }
+    }
+
+    function hideFullArticle() {
+        fullArticleModal.classList.remove('active');
+        document.body.style.overflow = 'auto'; // Re-enable scrolling
+    }
+
+    function filterNews(category) {
+        newsContainer.innerHTML = '';
+        const filteredArticles = category === 'home' ? articles : articles.filter(a => a.category === category);
+        filteredArticles.forEach(article => {
+            newsContainer.appendChild(createNewsCard(article));
+        });
+    }
+    
+    // Event listeners
+    navLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const category = e.target.dataset.category;
+            filterNews(category);
+
+            // Update active state
+            navLinks.forEach(l => l.style.textDecoration = 'none');
+            e.target.style.textDecoration = 'underline';
+        });
+    });
+
+    closeBtn.addEventListener('click', hideFullArticle);
+    
+    // Hide modal if clicked outside of the content
+    fullArticleModal.addEventListener('click', (e) => {
+        if (e.target.classList.contains('full-article')) {
+            hideFullArticle();
+        }
+    });
+
+    // Initial page load
+    filterNews('home');
+    document.querySelector('nav a[data-category="home"]').style.textDecoration = 'underline';
+
+</script>
+
+</body>
+</html>
