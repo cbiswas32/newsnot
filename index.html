@@ -1,0 +1,495 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Bengal Bulletin</title>
+  <meta name="description" content="A clean, responsive single-file news website with categories: Home, Legal, Sports, Educational, Entertainment. Click a card to read the full story." />
+  <style>
+    :root{
+      --bg: #0b0f14;       /* background */
+      --elev: #101720;     /* elevated surface */
+      --card: #121b26;     /* card background */
+      --muted: #9fb3c8;    /* muted text */
+      --text: #e9f0f7;     /* primary text */
+      --brand: #4cc9f0;    /* accent */
+      --brand-2:#a78bfa;   /* secondary accent */
+      --ring: rgba(76,201,240,.45);
+      --radius: 16px;
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --container: 1200px;
+    }
+
+    @media (prefers-color-scheme: light){
+      :root{
+        --bg: #f7fbff;
+        --elev:#ffffff;
+        --card:#ffffff;
+        --muted:#52667a;
+        --text:#0b1a2b;
+        --brand:#2563eb;
+        --brand-2:#7c3aed;
+        --ring: rgba(37,99,235,.25);
+        --shadow: 0 8px 24px rgba(2,6,23,.08);
+      }
+      .logo span{ filter:none; }
+    }
+
+    * { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body{
+      margin:0; font: 16px/1.6 system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      color: var(--text); background: radial-gradient(1200px 600px at 80% -100px, rgba(76,201,240,.15), transparent 60%), var(--bg);
+    }
+
+    /* ======= Layout ======= */
+    .container{ max-width: var(--container); margin: 0 auto; padding: 0 20px; }
+    header{
+      position: sticky; top:0; z-index: 10;
+      backdrop-filter: saturate(1.2) blur(8px);
+      background: color-mix(in oklab, var(--bg) 75%, transparent);
+      border-bottom: 1px solid color-mix(in oklab, var(--text) 12%, transparent);
+    }
+    .nav{
+      display:flex; align-items:center; justify-content:space-between; gap:16px;
+      padding:14px 0;
+    }
+    .logo{ display:flex; align-items:center; gap:10px; font-weight:800; letter-spacing:.2px; }
+    .logo .mark{
+      width:36px; height:36px; border-radius:12px;
+      background: conic-gradient(from 200deg at 50% 50%, var(--brand), var(--brand-2));
+      box-shadow: 0 8px 24px var(--ring), inset 0 0 0 2px color-mix(in oklab, var(--text) 10%, transparent);
+    }
+    .logo span{ font-size:1.1rem; opacity:.95; }
+
+    /* ======= Tabs (CSS-only) ======= */
+    .tabs{ display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+    .tabs input{ position:absolute; appearance:none; }
+    .tabs label{
+      display:inline-flex; align-items:center; gap:8px; cursor:pointer; user-select:none;
+      padding:10px 14px; border-radius:999px; border:1px solid color-mix(in oklab, var(--text) 10%, transparent);
+      background: linear-gradient(180deg, color-mix(in oklab, var(--elev) 80%, transparent), color-mix(in oklab, var(--card) 85%, transparent));
+      color: var(--text); font-weight:600; letter-spacing:.2px;
+      transition: transform .12s ease, border-color .2s ease, background .2s ease;
+    }
+    .tabs label:hover{ transform: translateY(-1px); }
+
+    /* Active state */
+    #tab-home:checked ~ .controls label[for="tab-home"],
+    #tab-legal:checked ~ .controls label[for="tab-legal"],
+    #tab-sports:checked ~ .controls label[for="tab-sports"],
+    #tab-edu:checked   ~ .controls label[for="tab-edu"],
+    #tab-ent:checked   ~ .controls label[for="tab-ent"]{
+      border-color: var(--brand);
+      box-shadow: 0 0 0 6px var(--ring);
+    }
+
+    /* ======= Hero ======= */
+    .hero{ padding: 28px 0 10px; }
+    .hero .headline{ font-size: clamp(1.6rem, 1.1rem + 1.8vw, 2.4rem); margin: 10px 0 6px; letter-spacing:.3px; }
+    .hero .sub{ color: var(--muted); font-size: 0.98rem; margin:0; }
+
+    /* ======= Grids ======= */
+    .grid{ display:grid; gap:16px; grid-template-columns: repeat(12, 1fr); }
+    .col-span-7{ grid-column: span 7; }
+    .col-span-5{ grid-column: span 5; }
+    @media (max-width: 900px){ .col-span-7, .col-span-5{ grid-column: 1 / -1; } }
+
+    .card{
+      background: var(--card); border:1px solid color-mix(in oklab, var(--text) 10%, transparent);
+      border-radius: var(--radius); box-shadow: var(--shadow); overflow:hidden;
+      transition: transform .18s ease, box-shadow .18s ease;
+      text-decoration: none; color: inherit; display:block;
+    }
+    .card:hover{ transform: translateY(-2px); box-shadow: 0 16px 40px rgba(0,0,0,.25); }
+
+    .cover{ aspect-ratio: 16/9; background:
+      linear-gradient(120deg, color-mix(in oklab, var(--brand) 25%, transparent), transparent 70%),
+      linear-gradient(180deg, color-mix(in oklab, var(--brand-2) 22%, transparent), transparent 60%),
+      radial-gradient(600px 280px at 80% -20%, color-mix(in oklab, var(--brand) 25%, transparent), transparent 60%),
+      #0e1520; }
+    .pad{ padding:16px; }
+    .kicker{ color: var(--brand); font-weight:700; letter-spacing:.25px; text-transform: uppercase; font-size:.78rem; }
+    .title{ margin:.2rem 0 .4rem; font-size:1.15rem; line-height:1.3; }
+    .meta{ color: var(--muted); font-size:.85rem; display:flex; gap:10px; align-items:center; }
+    .pill{ display:inline-flex; align-items:center; gap:6px; padding:5px 10px; border-radius:999px; border:1px solid color-mix(in oklab, var(--text) 12%, transparent); font-size:.78rem; }
+
+    .list{ display:grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap:16px; }
+
+    /* ======= Section visibility controlled by radio tabs ======= */
+    section[role="tabpanel"]{ display:none; }
+    #tab-home:checked  ~ main #panel-home,
+    #tab-legal:checked ~ main #panel-legal,
+    #tab-sports:checked~ main #panel-sports,
+    #tab-edu:checked   ~ main #panel-edu,
+    #tab-ent:checked   ~ main #panel-ent{ display:block; }
+
+    /* ======= Modal (CSS-only via :target) ======= */
+    .modal{
+      position: fixed; inset: 0; display: grid; place-items: center;
+      background: color-mix(in oklab, var(--bg) 65%, rgba(0,0,0,.4));
+      padding: 24px; opacity: 0; visibility: hidden; transition: opacity .2s ease, visibility .2s ease;
+      z-index: 50;
+    }
+    .modal:target{ opacity:1; visibility: visible; }
+    .modal .sheet{
+      max-width: 920px; width: 100%; max-height: 85vh; overflow: auto;
+      background: var(--card); border:1px solid color-mix(in oklab, var(--text) 10%, transparent);
+      border-radius: calc(var(--radius) + 4px); box-shadow: var(--shadow);
+    }
+    .sheet .header{
+      padding:18px 20px; border-bottom:1px solid color-mix(in oklab, var(--text) 10%, transparent);
+      display:flex; align-items:start; justify-content:space-between; gap:12px;
+    }
+    .sheet h2{ margin:0; line-height:1.2; font-size: clamp(1.2rem, 1rem + .8vw, 1.6rem); }
+    .sheet .content{ padding: 4px 20px 20px; }
+    .sheet .byline{ color: var(--muted); font-size:.92rem; margin: 2px 0 10px; }
+    .close{
+      display:flex; align-items:center; justify-content:flex-end; gap:8px;
+      padding:8px 12px; border-radius:999px; border:1px solid color-mix(in oklab, var(--text) 12%, transparent);
+      background: linear-gradient(180deg, color-mix(in oklab, var(--elev) 80%, transparent), color-mix(in oklab, var(--card) 85%, transparent));
+      color: red; font-weight:600; text-decoration:none; white-space:nowrap;
+    }
+    .sheet .cover {
+  width: 100%;           /* or fixed width/height as per design */
+  height: auto;         /* set desired height */
+  overflow: hidden;      /* ensures no overflow */
+  position: relative;
+  border-radius: 8px;    /* optional rounded corners */
+}
+
+.cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: fit;     /* makes the image fill & crop to cover */
+  object-position: center; /* keep center in focus */
+  display: block;
+
+
+    /* ======= Footer ======= */
+    footer{ margin: 36px 0 60px; color: var(--muted); font-size:.9rem; text-align:center; }
+
+    /* Utility */
+    .sr-only{ position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); border:0; }
+  </style>
+</head>
+<body>
+  <!-- ====== Hidden radio controls (one is checked by default) ====== -->
+  <input type="radio" name="tabs" id="tab-home" class="sr-only" checked>
+  <input type="radio" name="tabs" id="tab-legal" class="sr-only">
+  <input type="radio" name="tabs" id="tab-sports" class="sr-only">
+  <input type="radio" name="tabs" id="tab-edu" class="sr-only">
+  <input type="radio" name="tabs" id="tab-ent" class="sr-only">
+
+  <header>
+    <div class="container nav">
+      <div class="logo" aria-label="Bengal Bulletin">
+        <div class="mark" aria-hidden="true"></div>
+        <span>Bengal Bulletin</span>
+      </div>
+      <nav class="tabs" aria-label="Primary">
+        <div class="controls" role="tablist" aria-label="Sections">
+          <label for="tab-home" role="tab" aria-controls="panel-home" tabindex="0">HOME</label>
+          <label for="tab-legal" role="tab" aria-controls="panel-legal" tabindex="0">LEGAL</label>
+          <label for="tab-sports" role="tab" aria-controls="panel-sports" tabindex="0">SPORTS</label>
+          <label for="tab-edu" role="tab" aria-controls="panel-edu" tabindex="0">EDUCATIONAL</label>
+          <label for="tab-ent" role="tab" aria-controls="panel-ent" tabindex="0">ENTERTAINMENT</label>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <div class="container hero">
+    <p class="kicker">Breaking • Updated just now</p>
+    <h1 class="headline">All the headlines that matter — organized by category.</h1>
+    <p class="sub">Click on the news to read.</p>
+  </div>
+
+  <main class="container" id="content" aria-live="polite">
+    <!-- ================= HOME (Top pick) ================= -->
+    <section id="panel-home" role="tabpanel" aria-labelledby="tab-home">
+      <div class="grid">
+        <!-- Feature = Heat & Humidity / Parade -->
+        <a class="card col-span-7" href="#news-red-road">
+          <div class="cover" aria-hidden="true"><img src='./images/heat.png'  alt="heat"/></div>
+          <div class="pad">
+            <span class="pill">Top Story</span>
+            <h2 class="title">Heat & Humidity Cause Mass Illness at Kolkata’s Red Road Parade</h2>
+            <p>What was meant to be a proud Independence Day march turned into a medical emergency as 39 students collapsed during the state parade.</p>
+            <div class="meta"><span>6–7 min read</span> • <time datetime="2025-08-15">Aug 15, 2025</time></div>
+          </div>
+        </a>
+
+        <aside class="col-span-5">
+          <div class="list">
+            <a class="card" href="#news-ssc-teacher">
+              <div class="cover" aria-hidden="true"><img src='./images/teacher.png'  alt="teacher"/></div>
+              <div class="pad">
+                <span class="kicker">West Bengal</span>
+                <h3 class="title">Bengal Teacher’s Death Casts Shadow Over SSC Recruitment Crisis</h3>
+                <p class="meta"><time datetime="2025-08-15">Aug 15</time> • 4–5 min read</p>
+              </div>
+            </a>
+            <a class="card" href="#news-cwg-ahmedabad">
+              <div class="cover" aria-hidden="true"><img src='./images/games.png'  alt="games"/></div>
+              <div class="pad">
+                <span class="kicker">Nation</span>
+                <h3 class="title">India Pushes for 2030 Commonwealth Games Host Spot, Ahmedabad in the Lead</h3>
+                <p class="meta"><time datetime="2025-08-13">Aug 13</time> • 4–5 min read</p>
+              </div>
+            </a>
+            <a class="card" href="#news-putulnacher">
+              <div class="cover" aria-hidden="true"><img src='./images/putulnach.png'  alt="putulnach"/></div>
+              <div class="pad">
+                <span class="kicker">Culture</span>
+                <h3 class="title">“Putulnacher Itikotha” Weaves a Poignant Tale of Faith, Science, and Human Struggle</h3>
+                <p class="meta"><time datetime="2025-07-31">Jul 31</time> • 3–4 min read</p>
+              </div>
+            </a>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- ================= LEGAL ================= -->
+    <section id="panel-legal" role="tabpanel" aria-labelledby="tab-legal">
+      <div class="list">
+        <a class="card" href="#news-stray-dogs">
+          <div class="cover" aria-hidden="true"><img src='./images/dogs.png'  alt="dogs"/></div>
+          <div class="pad">
+            <span class="pill">Legal</span>
+            <h3 class="title">Supreme Court Orders Mass Relocation of Stray Dogs in Delhi, Sparks Debate</h3>
+            <p>The directive orders capture and transfer of strays to new shelters, igniting legal and ethical questions.</p>
+            <p class="meta">5–6 min read • <time datetime="2025-08-11">Aug 11, 2025</time></p>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <!-- ================= SPORTS ================= -->
+    <section id="panel-sports" role="tabpanel" aria-labelledby="tab-sports">
+      <div class="list">
+        <a class="card" href="#news-cwg-ahmedabad">
+          <div class="cover" aria-hidden="true"><img src='./images/games.png'  alt="games"/></div>
+          <div class="pad">
+            <span class="pill">Sports</span>
+            <h3 class="title">India bids to host the 2030 Commonwealth Games — Ahmedabad leads</h3>
+            <p>Officials pitch sustainability, gender equality, and cultural integration as the heart of the bid.</p>
+            <p class="meta">4–5 min read • <time datetime="2025-08-13">Aug 13, 2025</time></p>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <!-- ================= EDUCATIONAL ================= -->
+    <section id="panel-edu" role="tabpanel" aria-labelledby="tab-edu">
+      <div class="list">
+        <a class="card" href="#news-red-road">
+          <div class="cover" aria-hidden="true"><img src='./images/heat.png'  alt="heat"/></div>
+          <div class="pad">
+            <span class="pill">Educational</span>
+            <h3 class="title">Heat & Humidity at Kolkata’s Red Road Parade — 39 students collapse</h3>
+            <p>Doctors attribute cases to heat exhaustion and dehydration; experts urge stronger safeguards.</p>
+            <p class="meta">6–7 min read • <time datetime="2025-08-15">Aug 15, 2025</time></p>
+          </div>
+        </a>
+
+        <a class="card" href="#news-ssc-teacher">
+          <div class="cover" aria-hidden="true"><img src='./images/teacher.png'  alt="teacher"/></div>
+          <div class="pad">
+            <span class="pill">Education</span>
+            <h3 class="title">Job loss stress blamed as teacher’s death intensifies SSC protests</h3>
+            <p>After the Supreme Court scrapped the 2016 SSC panel, uncertainty deepens for thousands.</p>
+            <p class="meta">4–5 min read • <time datetime="2025-08-15">Aug 15, 2025</time></p>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <!-- ================= ENTERTAINMENT ================= -->
+    <section id="panel-ent" role="tabpanel" aria-labelledby="tab-ent">
+      <div class="list">
+        <a class="card" href="#news-putulnacher">
+          <div class="cover" aria-hidden="true">
+		  <img src='./images/putulnach.png'  alt="putulnach"/>
+		  </div>
+          <div class="pad">
+            <span class="pill">Entertainment</span>
+            <h3 class="title">“Putulnacher Itikotha” set to hit theatres — a timeless clash of reason & belief</h3>
+            <p>Suman Mukhopadhyay adapts Manik Bandyopadhyay’s 1936 classic; early buzz is strong.</p>
+            <p class="meta">3–4 min read • <time datetime="2025-07-31">Jul 31, 2025</time></p>
+          </div>
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="container">
+    <p>© <span id="year">2025</span> Bengal Bulletin</p>
+  </footer>
+
+  <!-- ================= FULL ARTICLES (Sheets) ================= -->
+
+  <!-- Red Road Parade -->
+  <section class="modal" id="news-red-road" aria-labelledby="news-red-road-title" role="dialog" aria-modal="true">
+    <article class="sheet">
+	 <a class="close" href="#content" aria-label="Close">Close</a>
+      <div class="cover" aria-hidden="true"><img src='./images/heat.png'  alt="heat"/></div>
+      <div class="header">
+        <div>
+          <h2 id="news-red-road-title">Heat and Humidity Cause Mass Illness at Kolkata’s Red Road Parade</h2>
+          <p class="byline">By Minakshi Karmakar • Published Aug 15, 2025, 03:25 pm IST • Kolkata</p>
+        </div>
+       
+      </div>
+      <div class="content">
+        <p>Students from various state’s schools were participating in a tableau on 79th Independence Day at Red Road.</p>
+        <p><em>Independence parade at Red Road.</em></p>
+        <p>What was meant to be a proud Independence Day march turned into a medical emergency when 39 school students collapsed during the state parade on Red Road, prompting urgent calls for stronger health safeguards during large public events.</p>
+        <p>The incident occurred mid-morning as thousands gathered to witness the annual celebrations. Light rainfall earlier in the day gave way to heavy humidity and warm conditions, creating a challenging environment for parade participants who had been standing in formation for extended periods.</p>
+        <p>Witnesses reported that the first signs of distress appeared when a few students complained of dizziness and nausea. Within minutes, others began to faint, triggering a chain reaction as worried peers also left their positions. Event medical staff rushed in with water and first-aid supplies, but many of the affected students had to be transported to SSKM Hospital for treatment.</p>
+        <h3>Rapid Medical Response</h3>
+        <p>Doctors at SSKM diagnosed most cases as heat exhaustion combined with dehydration. A few students showed signs of low blood pressure and required intravenous fluids. “Prolonged standing in humid conditions can quickly cause fluid loss and overheating, especially in children,” explained a senior physician on duty.</p>
+        <p>Chief Minister Mamata Banerjee, who was attending the parade, visited the hospital immediately after the event. She assured parents that all the children were out of danger. By evening, the majority had been discharged, with only one student kept under observation for further monitoring.</p>
+        <h3>Health Experts Urge Precautionary Measures</h3>
+        <p>Public health experts say the incident highlights the growing risks of heat-related illnesses, particularly as extreme weather events become more frequent. “Humidity is just as dangerous as direct sunlight because it prevents sweat from evaporating, which is the body’s natural cooling mechanism,” said Dr. Ananya Basu, a Kolkata-based pediatrician.</p>
+        <p>Recommendations include ensuring shaded waiting areas for participants, scheduling parades during cooler hours, and making regular hydration breaks mandatory. Schools have also been advised to prepare students physically for such events, including light conditioning exercises and guidance on heat safety.</p>
+        <h3>Lessons for the Future</h3>
+        <p>While the Red Road parade remains one of Kolkata’s most celebrated traditions, this year’s health scare has prompted a review of safety protocols. Organisers are expected to consult with medical professionals before finalizing next year’s arrangements.</p>
+        <p>For now, families of the affected students are relieved their children are safe — but the incident serves as a timely reminder that public health planning must be as central to national celebrations as the festivities themselves.</p>
+      </div>
+    </article>
+  </section>
+
+  <!-- Supreme Court Stray Dogs -->
+  <section class="modal" id="news-stray-dogs" aria-labelledby="news-stray-dogs-title" role="dialog" aria-modal="true">
+    <article class="sheet">
+	<a class="close" href="#content" aria-label="Close">Close</a>
+      <div class="cover" aria-hidden="true"><img src='./images/dogs.png'  alt="dogs"/></div>
+      <div class="header">
+        <div>
+          <h2 id="news-stray-dogs-title">Supreme Court Orders Mass Relocation of Stray Dogs in Delhi, Sparks Legal and Ethical Debate</h2>
+          <p class="byline">By Minakshi Karmakar • Published Aug 11, 2025, 07:30 pm IST • New Delhi</p>
+        </div>
+        
+      </div>
+      <div class="content">
+        <p><em>Stray dogs at a locality in New Delhi.</em></p>
+        <p>The Supreme Court of India has issued a significant directive ordering the removal of all stray dogs from residential areas of Delhi and its adjoining regions, marking a decisive shift in how the capital will handle a long-standing public safety issue. The verdict, delivered earlier this week, has ignited a nationwide debate over the balance between human safety and animal rights.</p>
+        <h3>The Verdict and Its Scope</h3>
+        <p>A bench comprising Justices J. B. Pardiwala and R. Mahadevan directed municipal bodies to capture and transfer stray dogs to newly established shelters within six to eight weeks. The shelters must be equipped for mass sterilisation, rabies vaccination, and long-term housing, with the capacity to hold at least 5,000 animals initially.</p>
+        <p>The Court further mandated the creation of a 24-hour helpline for reporting dog-bite incidents, requiring civic authorities to respond within four hours of any complaint. Strict penalties were also announced for individuals or organisations obstructing the relocation process.</p>
+        <h3>Rationale Behind the Decision</h3>
+        <p>The ruling comes amid rising reports of dog bites and rabies-related deaths, especially among children in urban neighbourhoods. Citing these figures, the Court stated that “infants and young children must not, at any cost, fall prey to rabies,” and urged that sentiment must not overshadow safety.</p>
+        <p>The judges noted that existing sterilisation programs under the Animal Birth Control (ABC) Rules had failed to significantly curb aggressive behaviour or disease transmission, leading to the conclusion that a more direct intervention was necessary.</p>
+        <h3>Criticism and Pushback</h3>
+        <p>Animal rights groups and several legal experts have sharply criticised the decision, calling it a step backward from decades of humane stray dog management policy. The ABC Rules — which mandated capture, sterilisation, vaccination, and return of dogs to their original territories — were upheld by previous court rulings and widely considered an ethical standard.</p>
+        <p>Opponents argue that mass removal could cause overcrowding in shelters, increase animal suffering, and disrupt local ecological balances. Some lawyers have already indicated plans to file review petitions, seeking clarity on whether the verdict violates constitutional protections for animals.</p>
+        <h3>Civic Responsibility Under Scrutiny</h3>
+        <p>Following the order, a separate three-judge bench of the Court — comprising Justices Vikram Nath, Sandeep Mehta, and N. V. Anjaria — expressed concern that the current crisis was the result of years of municipal inaction. They observed that while rules and guidelines existed, they were poorly enforced, leaving both residents and stray animals vulnerable.</p>
+        <h3>What Lies Ahead</h3>
+        <p>Implementation of the Supreme Court’s order will require rapid coordination between the Delhi government, municipal corporations, and animal welfare organisations. The matter remains under judicial watch, with further hearings expected to assess compliance and address legal challenges.</p>
+        <p>As the city braces for this unprecedented relocation effort, the verdict has drawn a clear legal line: in conflicts between public safety and stray animal rights, the scales — at least for now — tip in favour of human protection.</p>
+      </div>
+    </article>
+  </section>
+
+  <!-- Commonwealth Games Bid -->
+  <section class="modal" id="news-cwg-ahmedabad" aria-labelledby="news-cwg-title" role="dialog" aria-modal="true">
+    <article class="sheet">
+	<a class="close" href="#content" aria-label="Close">Close</a>
+      <div class="cover" aria-hidden="true"><img src='./images/games.png'  alt="games"/></div>
+      <div class="header">
+        <div>
+          <h2 id="news-cwg-title">India Pushes for 2030 Commonwealth Games Host Spot, Ahmedabad in the Lead</h2>
+          <p class="byline">By Minakshi Karmakar • Published Aug 13, 2025, 2:30 pm IST • Kolkata</p>
+        </div>
+        
+      </div>
+      <div class="content">
+        <p><em>Logo of Commonwealth Games.</em></p>
+        <p>India’s ambition to host the 2030 Commonwealth Games has gained significant momentum this month, with Ahmedabad emerging as the focal point of the bid. Backed by strong government support, modern sports infrastructure, and an increasingly confident sporting ecosystem, the country now stands as a leading contender for the prestigious multi-sport event.</p>
+        <p>A high-level delegation from the Commonwealth Sports Federation visited India earlier this week to inspect the proposed venues and assess the readiness of facilities. The tour included stops at the Sardar Vallabhbhai Patel Sports Enclave and other major sites in Ahmedabad, which have been designed to meet global standards for both athletes and spectators.</p>
+        <p>Speaking to reporters after the visit, Indian Olympic Association (IOA) President Rajesh Bhandari expressed optimism: “Our preparations are in line with the expectations of the Commonwealth Sports body. Ahmedabad offers not just world-class facilities, but also a city ready to host a cultural celebration alongside the Games.”</p>
+        <p>The IOA’s bid focuses on three key themes — sustainability, gender equality, and cultural integration. Plans include the use of renewable energy for venues, equitable promotion of men’s and women’s events, and showcasing India’s regional art forms during opening and closing ceremonies.</p>
+        <p>Residents in Ahmedabad have reacted with excitement and pride. Anjali Desai, a local schoolteacher, said: “This is more than just a sports event for us. It will put our city on the global map and inspire our children to take up sports.” Hotels, transport hubs, and businesses are already anticipating a surge in international visitors if India’s bid is successful.</p>
+        <p>India’s competition is stiff, with Canada and Nigeria also in the race. Canada brings a strong hosting record and Nigeria is positioning itself as a representative for Africa’s growing sporting aspirations. The final host city will be decided at the Commonwealth Sports General Assembly in Glasgow this November, following the August 31 bid submission deadline.</p>
+        <p>Sports analysts believe India’s case is strengthened by its successful hosting of past major events, including the 2010 Commonwealth Games in Delhi and the 2023 Cricket World Cup. However, they caution that operational efficiency, transport connectivity, and accommodation readiness will be key deciding factors.</p>
+        <p>Government officials have assured that funding and logistical arrangements are being finalised. A senior Ministry of Youth Affairs and Sports representative noted: “We are approaching this as a national priority. The Commonwealth Games will leave a long-term legacy for sports infrastructure and tourism in India.”</p>
+        <p>As the countdown to the decision continues, Ahmedabad’s streets are already seeing promotional banners and community sports events in support of the bid. For many, the dream of hosting the Commonwealth Games represents not just sporting prestige, but also a chance to showcase the energy, diversity, and modern capability of a new India on the world stage.</p>
+      </div>
+    </article>
+  </section>
+
+  <!-- SSC Teacher Death -->
+  <section class="modal" id="news-ssc-teacher" aria-labelledby="news-ssc-title" role="dialog" aria-modal="true">
+    <article class="sheet">
+	<a class="close" href="#content" aria-label="Close">Close</a>
+      <div class="cover" aria-hidden="true"><img src='./images/teacher.png'  alt="teacher"/></div>
+      <div class="header">
+        <div>
+          <h2 id="news-ssc-title">Bengal Teacher’s Death Casts Shadow Over SSC Recruitment Crisis</h2>
+          <p class="byline">By Minakshi Karmakar • Published Aug 15, 2025, 6:30 pm IST • Kolkata</p>
+        </div>
+        
+      </div>
+      <div class="content">
+        <p><em>Job loss stress blamed as 35-year-old teacher’s death intensifies protests over SSC recruitment cancellations.</em></p>
+        <p><em>Late Subal Soren who passed away after a cerebral attack.</em></p>
+        <p>Even as India celebrated its 78th Independence Day, grief descended on Paschim Medinipur when 35-year-old teacher Subal Soren passed away after suffering a cerebral attack. Soren, whose appointment had been cancelled following the Supreme Court’s order scrapping the 2016 School Service Commission (SSC) recruitment panel, had been actively protesting for reinstatement along with thousands of other jobless educators.</p>
+        <p>Doctors said he was admitted first to Debra Super Speciality Hospital before being shifted to a Kolkata facility, where he succumbed after four days of treatment.</p>
+        <h3>Stress and Uncertainty Blamed</h3>
+        <p>Soren’s family and colleagues maintain that his medical collapse was triggered by stress.</p>
+        <p>“He was the only breadwinner. After losing his job, he was shattered both mentally and physically,” his wife told reporters.</p>
+        <p>Protesters also echoed the same despair. One teacher remarked:</p>
+        <blockquote>“Our death warrants were signed on April 3, the day the verdict was announced. Subal’s passing is the face of our suffering.”</blockquote>
+        <h3>Wider Fallout of SSC Verdict</h3>
+        <p>In April this year, the Supreme Court annulled 25,753 school appointments made through the 2016 SSC process, citing irregularities. While the court permitted “untainted” candidates to work temporarily, it ordered fresh recruitment by December 31, 2025.</p>
+        <p>The ruling plunged thousands of teachers and non-teaching staff into uncertainty. Many have since resorted to hunger strikes, rallies, and sit-ins, demanding that those with genuine credentials be spared the punishment.</p>
+        <h3>Protests Intensify After Death</h3>
+        <p>News of Soren’s demise triggered spontaneous protests outside the hospital. Demonstrators raised slogans against the state administration and the SSC, accusing them of ignoring the mental health crisis among the affected teachers.</p>
+        <p>Opposition leaders seized on the development, blaming the government for failing to provide relief to genuine candidates. The ruling party, however, has maintained that it is bound to implement the apex court’s decision.</p>
+        <h3>A Symbol of Struggle</h3>
+        <p>Education experts warn that the continuing deadlock risks damaging trust in the recruitment system and deepening the crisis in government schools already grappling with vacancies.</p>
+        <p>For fellow teachers, however, Soren’s death is more than statistics and politics—it is a grim reminder of the cost borne by ordinary families.</p>
+        <p>As colleagues carried his body home draped in black flags, Independence Day celebrations felt muted. For thousands like him, freedom remains distant—freedom from joblessness, despair, and systemic failure.</p>
+      </div>
+    </article>
+  </section>
+
+  <!-- Putulnacher Itikotha -->
+  <section class="modal" id="news-putulnacher" aria-labelledby="news-putulnacher-title" role="dialog" aria-modal="true">
+    <article class="sheet">
+	         <a class="close" href="#content" aria-label="Close">Close</a>
+	 <div class="cover" aria-hidden="true" ><img src='./images/putulnach.png'  alt="putulnach"/></div>
+      <div class="header">
+        <div>
+          <h2 id="news-putulnacher-title">“Putulnacher Itikotha” Weaves a Poignant Tale of Faith, Science, and Human Struggle</h2>
+          <p class="byline">By Minakshi Karmakar • Published Jul 31, 2025, 10:30 pm IST • Kolkata</p>
+        </div>
+
+      </div>
+      <div class="content">
+        <p><em>After several acclamations in various film festivals, Putulnacher Itikotha is now all set to hit theatres on August 1, 2025.</em></p>
+        <p><em>Poster of “Putulnacher Itikotha.”</em></p>
+        <p>Bengali cinema will be welcoming a powerful new literary adaptation this week with the release of <strong>Putulnacher Itikotha</strong>, a film that breathes fresh life into Manik Bandyopadhyay’s 1936 classic. Directed by acclaimed filmmaker Suman Mukhopadhyay, the movie unfolds as a deep exploration of the human condition, set against the backdrop of rural Bengal’s battle between tradition and progress.</p>
+        <p><em>Actor Jaya Ahsan and Surangana Bandyopadhyay with the director Suman Mukhopadhyay.</em></p>
+        <p>The story follows Dr. Shashi (Abir Chatterjee), a young and idealistic physician who returns to his ancestral village determined to introduce modern medical practices. His vision quickly collides with a community deeply rooted in superstition, where centuries-old beliefs overshadow science and health interventions. As Shashi’s frustration mounts, his personal life becomes entangled with that of Kusum (Jaya Ahsan) and Kumud (Parambrata Chattopadhyay), whose arrival stirs emotional undercurrents that threaten to derail his mission.</p>
+        <p>Mukhopadhyay’s adaptation remains faithful to the essence of Bandyopadhyay’s original work, retaining its philosophical weight while offering a cinematic language that is visually immersive. Cinematographer Sayak Bhattacharya crafts each frame like a painting, using soft light and earthy tones to reflect the quiet despair and moral dilemmas of the characters. The rural setting — from dusty pathways to rain-drenched courtyards — is depicted with a realism that becomes an unspoken character in the film.</p>
+        <p>The performances anchor the narrative. Abir Chatterjee delivers a nuanced portrayal of Shashi’s quiet battle between idealism and resignation. Jaya Ahsan brings depth to Kusum, balancing vulnerability and defiance, while Parambrata Chattopadhyay’s Kumud injects charm and ambiguity. Supporting roles by Ananya Chatterjee and Dhritiman Chatterjee add further emotional texture.</p>
+        <p>Speaking at the film’s Kolkata premiere, Mukhopadhyay described the project as a “16-year journey from dream to reality.” He said, “Manik Bandyopadhyay’s story remains as relevant today as when it was written — it forces us to question how much of our lives are governed by reason, and how much by inherited belief.”</p>
+        <p>Early audience reactions have been largely positive. Viewers praised the film’s atmospheric storytelling and strong performances, though some felt the pacing was deliberately slow. Film critic Anirban Mitra noted, “This is a film that asks you to think, not just watch. It doesn’t spoon-feed emotions — it lets you sit with them.”</p>
+        <p>The cultural significance of <em>Putulnacher Itikotha</em> goes beyond its narrative. In a time when Bengali cinema is increasingly turning to its literary roots for inspiration, the film serves as a bridge between generations — inviting younger audiences to engage with a nearly century-old novel while offering older viewers a visual reimagining of a cherished text.</p>
+        <p>By confronting the timeless tension between progress and tradition, Mukhopadhyay’s work invites reflection on issues that remain deeply relevant in modern India: the role of science in everyday life, the persistence of superstition, and the quiet struggles of those who try to spark change.</p>
+        <p>With its evocative visuals, committed performances, and enduring themes, <em>Putulnacher Itikotha</em> is more than just a film — it is a thought-provoking conversation between the past and the present.</p>
+      </div>
+    </article>
+  </section>
+
+  <!-- Optional tiny JS just to keep footer year current (same as your template) -->
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
